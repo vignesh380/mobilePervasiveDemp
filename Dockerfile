@@ -5,6 +5,8 @@ LABEL description="A container that runs the gabriel server application \
  usage docker run gabriel \
 if any parameters that has to be passed while starting the server can be passed in the following way: docker run gabriel <param 1>< param 2>"
 
+
+
 #RUN apt-get install  clang cmake ccache
 RUN apt-get update
 RUN apt-get install -y default-jre
@@ -15,8 +17,8 @@ RUN apt-get -y install locales build-essential automake subversion pkg-config ga
 RUN pip install psutil
 RUN pip install virtualenv
 RUN virtualenv -p python2.7 ~/.env-2.7
-# RUN /bin/sh -c "source ~/.env-2.7/bin/activate"
-RUN apt-get -y install tesseract-ocr
+RUN /bin/bash -c "source ~/.env-2.7/bin/activate"
+RUN apt-get update && apt-get -y install tesseract-ocr
 RUN pip install opencv-contrib-python
 RUN git clone https://github.com/cmusatyalab/gabriel.git
 RUN rm -r gabriel/client
