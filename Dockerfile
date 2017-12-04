@@ -25,7 +25,9 @@ RUN rm -r gabriel/client
 RUN pip install -r gabriel/server/requirements.txt
 RUN apertium-get en-es && cd apertium-en-es && make && make install
 RUN pip install pillow pytesseract
-RUN cd gabriel/server/bin/example-proxies && git clone https://github.com/vignesh380/mobilePervasiveDemp.git
+RUN cd gabriel/server/bin/example-proxies/mobilePervasiveDemp && mv gabriel-proxy-text-detection.py ..
+RUN cd gabriel/server/bin/example-proxies/mobilePervasiveDemp && mv trained_classifierNM1.xml ..
+RUN cd gabriel/server/bin/example-proxies/mobilePervasiveDemp && mv trained_classifierNM2.xml ..
 #ENTRYPOINT /bin/sh
 #ENTRYPOINT /gabriel/server/bin/gabriel-control > /gabriel/server/bin/logs
 CMD python /gabriel/server/bin/gabriel-control
