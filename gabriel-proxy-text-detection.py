@@ -48,6 +48,18 @@ def process_command_line(argv):
 
 class DummyVideoApp(gabriel.proxy.CognitiveProcessThread):
 
+    word_list = set()
+    word_list.add("flood")
+    word_list.add("floodway")
+    word_list.add("way")
+    def word_in_dict(self,txt):
+	splits = txt.split()
+	final= ""
+	for word in splits:
+	    word = word.lower()
+	    if word in self.word_list:
+		final +=word
+	return final
     def find_text(self, img):
         try:
             vis = img.copy()
@@ -82,21 +94,28 @@ class DummyVideoApp(gabriel.proxy.CognitiveProcessThread):
                     # cv2.imshow('imCrop', imCrop)
                     tesImg = Image.fromarray(imCrop)
                     txt = pytesseract.image_to_string(tesImg)
-                    pipe = subprocess.Popen([" echo ", txt, "| apertium -d apertium-en-es en-es"], shell=True,
-                                            stdout=subprocess.PIPE).stdout
-                    convertedTxt = pipe.read()
-                    print("found text:" + convertedTxt)
-                    cv2.rectangle(vis, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (255, 0, 255), 1)
+   		    print("tesseract text: "+ txt)
+                    txt = self.word_in_dict(txt)
+		    if (len(txt.strip()) != 0):
+   		         print("tesseract text: "+ txt)
+		         # print("apertium path : " +" echo \" "+ txt+ " \"| apertium -d /apertium-en-es en-es" )
+		         pipe = subprocess.Popen(" echo \" "+ txt+ " \"| apertium -d /apertium-en-es en-es", shell=True,
+                                                 stdout=subprocess.PIPE).stdout
+                         convertedTxt = pipe.read()
+			 covertedTxt = convertedTxt.translate(None,"*?")
+			 # covertedTxt = convertedTxt.replace("?","");
+                         print("found text:" + convertedTxt)
+                         cv2.rectangle(vis, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (255, 0, 255), 1)
 
-                    cv2.putText(vis, "wazza", (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                                (255, 255, 255), 2, 2)
+        #            cv2.putText(vis, "wazza", (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1,
+        #                        (255, 255, 255), 2, 2)
 
-                    cv2.putText(vis, convertedTxt, (rect[0], rect[1] + rect[3]), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                         cv2.putText(vis, convertedTxt, (rect[0], rect[1] + rect[3]), cv2.FONT_HERSHEY_SIMPLEX, 1,
                                 (255, 255, 255), 2, 2)
                     return vis
         except Exception as e:
-            print e
-            return None
+            print("find_text exception: "+ str(e))
+            return img
 
     def add_to_byte_array(self, byte_array, extra_bytes):
         return struct.pack("!{}s{}s".format(len(byte_array), len(extra_bytes)), byte_array, extra_bytes)
