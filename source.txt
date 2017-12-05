@@ -1,0 +1,4 @@
+gabirel-proxy-test-detection.py is adapted from the following source: https://github.com/opencv/opencv_contrib/blob/master/modules/text/samples/textdetection.py
+
+The models are used as-is from the above link for detection of text 
+ 
