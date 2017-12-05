@@ -74,6 +74,13 @@ class DummyVideoApp(gabriel.proxy.CognitiveProcessThread):
     word_list.add("passport")
     word_list.add("toilet")
     word_list.add("gate")
+    word_list.add("speed")
+    word_list.add("limit")
+    word_list.add("speedlimit")
+    word_list.add("top")
+    word_list.add("pop")
+    word_list.add("mop")
+
 
     def word_in_dict(self,txt):
 	splits = txt.split()
@@ -97,7 +104,7 @@ class DummyVideoApp(gabriel.proxy.CognitiveProcessThread):
             # print len(channels)
             for i, channel in enumerate(channels):
                 # if(i>3):
-                #     continue;
+                #    continue;
                 erc1 = cv2.text.loadClassifierNM1('trained_classifierNM1.xml')
                 er1 = cv2.text.createERFilterNM1(erc1, 16, 0.00015, 0.13, 0.2, True, 0.1)
 
@@ -129,7 +136,12 @@ class DummyVideoApp(gabriel.proxy.CognitiveProcessThread):
 			 # covertedTxt = convertedTxt.replace("?","");
                          print("found text:" + convertedTxt)
                          cv2.rectangle(vis, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (255, 0, 255), 1)
-
+			 sub_face = vis[rect[1]:rect[1] + rect[3], rect[0]:rect[0] + rect[2]]
+	                 # apply a gaussian blur on this new recangle image
+                    	 sub_face = cv2.GaussianBlur(sub_face, (23, 23), 30)
+                    	 # merge this blurry rectangle to our final image
+                    	 vis[rect[1]:rect[1] + sub_face.shape[0], rect[0]:rect[0] + sub_face.shape[1]] = sub_face
+	
         #            cv2.putText(vis, "wazza", (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 1,
         #                        (255, 255, 255), 2, 2)
 
